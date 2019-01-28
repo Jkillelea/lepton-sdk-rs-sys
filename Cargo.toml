@@ -1,0 +1,10 @@
+[package]
+name = "lepton-sdk-rs-sys"
+version = "0.0.0"
+authors = ["Jacob Killelea <Jkillelea@protonmail.ch>"]
+edition = "2018"
+
+[dependencies]
+
+[build-dependencies]
+bindgen = "0.46.0"
