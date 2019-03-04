@@ -45,13 +45,32 @@ pub struct CameraPortDescriptor {
 }
 
 impl CameraPortDescriptor {
-    fn new() -> Self {
+    /// `open` is preferred
+    pub fn default() -> Self {
         CameraPortDescriptor {
-            port_id:   0,
+            port_id:   1,
             port_type: PortTag::CciTwi,
-            baud_rate: 0,
-            dev_addr:  0x2A
+            baud_rate: 400,
+            dev_addr:  0x2A,
         }
+    }
+
+    /// 1 for /dev/i2c-1
+    pub fn open(port_id: u16) -> (Self, LeptonResult) {
+        use bindings::*;
+
+        let mut port: LEP_CAMERA_PORT_DESC_T_TAG = unsafe { std::mem::zeroed() };
+        let port_type = PortTag::CciTwi;
+        let baud_rate = 400; // kHz
+        let result: LeptonResult;
+        unsafe {
+            result = LEP_OpenPort(port_id,
+                                  port_type as u32,
+                                  baud_rate,
+                                  &mut port).into();
+        }
+
+        (port.into(), result)
     }
 }
 
