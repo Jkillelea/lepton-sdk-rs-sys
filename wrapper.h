@@ -1,3 +1,4 @@
+#ifndef _WRAPPER_H_
 #include "lepton-sdk-fork/crc16.h"
 #include "lepton-sdk-fork/LEPTON_RAD.h"
 #include "lepton-sdk-fork/LEPTON_AGC.h"
@@ -13,4 +14,4 @@
 #include "lepton-sdk-fork/LEPTON_Macros.h"
 #include "lepton-sdk-fork/raspi_I2C.h"
 #include "lepton-sdk-fork/LEPTON_OEM.h"
-
+#endif // _WRAPPER_H_
