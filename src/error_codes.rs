@@ -50,11 +50,11 @@ impl LeptonResult {
     }
 }
 
-impl std::convert::From<bindings::Result> for LeptonResult {
+impl std::convert::From<bindings::LEP_RESULT> for LeptonResult {
     // Looks like the best way to convert from a C enum (integer) to a Rust enum
     // is still a lookup table
     #[allow(non_upper_case_globals)]
-    fn from(result: bindings::Result) -> Self {
+    fn from(result: bindings::LEP_RESULT) -> Self {
         match result {
             Result_LEP_OK                         => LeptonResult::Ok,
             // Result_LEP_COMM_OK                 => LeptonError::Ok,
