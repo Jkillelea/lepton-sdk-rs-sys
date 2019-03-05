@@ -1,7 +1,14 @@
 #![allow(dead_code)]
+
+use std::sync::Arc;
+use std::convert::From;
+
+#[macro_use]
+extern crate lazy_static;
+
 pub mod error_codes;
-pub mod types;
 pub use error_codes::*;
+pub mod types;
 pub use types::*;
 
 #[cfg(test)]
@@ -17,80 +24,76 @@ pub mod bindings {
     include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 }
 
-#[derive(Debug, Clone, Copy)]
-#[repr(u32)]
-pub enum PortTag {
-    CciTwi = bindings::LEP_CAMERA_PORT_E_TAG_LEP_CCI_TWI, 
-    CciSpi = bindings::LEP_CAMERA_PORT_E_TAG_LEP_CCI_SPI, 
-    End    = bindings::LEP_CAMERA_PORT_E_TAG_LEP_END_CCI_PORTS, 
+lazy_static! {
+    pub static ref CAMERA0: Arc<bindings::LEP_CAMERA_PORT_DESC_T_TAG> = {
+        Arc::new(bindings::LEP_CAMERA_PORT_DESC_T_TAG {
+                portID: 0,
+                portType: PortTag::CciTwi as u32,
+                portBaudRate: 400, // kHz
+                deviceAddress: 0x2A,
+        })
+    };
+    pub static ref CAMERA1: Arc<bindings::LEP_CAMERA_PORT_DESC_T_TAG> = {
+        Arc::new(bindings::LEP_CAMERA_PORT_DESC_T_TAG {
+                portID: 1,
+                portType: PortTag::CciTwi as u32,
+                portBaudRate: 400, // kHz
+                deviceAddress: 0x2A,
+        })
+    };
 }
 
-impl std::convert::From<u32> for PortTag {
-    fn from(tag: u32) -> Self {
-        match tag {
-            bindings::LEP_CAMERA_PORT_E_TAG_LEP_CCI_TWI => PortTag::CciTwi,
-            bindings::LEP_CAMERA_PORT_E_TAG_LEP_CCI_SPI => PortTag::CciSpi,
-            _ => panic!("Invalid Port Tag!"),
+
+/// An opaque, reference counted version of `LEP_CAMERA_PORT_DESC_T_TAG`
+#[repr(C)]
+#[derive(Debug, Clone)]
+pub struct CameraPortDescriptor {
+    inner: Arc<bindings::LEP_CAMERA_PORT_DESC_T_TAG>
+}
+
+impl From<bindings::LEP_CAMERA_PORT_DESC_T_TAG> for CameraPortDescriptor {
+    fn from(desc: bindings::LEP_CAMERA_PORT_DESC_T_TAG) -> Self {
+        CameraPortDescriptor {
+            inner: Arc::new(desc.clone()),
         }
     }
-}
-
-#[derive(Debug, Clone, Copy)]
-#[repr(C)]
-pub struct CameraPortDescriptor {
-    port_id:   u16,
-    port_type: PortTag,
-    baud_rate: u16,
-    dev_addr:  u8,
 }
 
 impl CameraPortDescriptor {
 
-    /// `open` is preferred
-    pub fn default() -> Self {
+    /// 1 for `/dev/i2c-1`, 0 for `/dev/i2c-0`
+    pub fn new(port_id: u16) -> Self {
         CameraPortDescriptor {
-            port_id:   1,
-            port_type: PortTag::CciTwi,
-            baud_rate: 400,
-            dev_addr:  0x2A,
+            inner: match port_id {
+                   0 => Arc::clone(&CAMERA0),
+                   1 => Arc::clone(&CAMERA1),
+                   _ => panic!("Only valid ports are 0 and 1"),
+            }
         }
     }
 
-    /// 1 for /dev/i2c-1
-    pub fn open(port_id: u16) -> (Self, LeptonResult) {
-        use bindings::*;
-
-        let mut port: LEP_CAMERA_PORT_DESC_T_TAG = unsafe { std::mem::zeroed() };
-        let port_type = PortTag::CciTwi;
-        let baud_rate = 400; // kHz
-        let result: LeptonResult;
-        unsafe {
-            result = LEP_OpenPort(port_id,
-                                  port_type as u32,
-                                  baud_rate,
-                                  &mut port).into();
-        }
-        (port.into(), result)
-    }
-
-    pub fn enable_radiometry(&mut self) -> LeptonResult {
+    pub fn open(&mut self) -> LeptonResult {
         use bindings::*;
 
         unsafe {
-            return LEP_SetRadEnableState(self as *mut LEP_CAMERA_PORT_DESC_T_TAG, 
-                                         EnableState::Enabled as u32).into();
+            LEP_OpenPort(self.inner.portID,
+                         self.inner.portType,
+                         self.inner.portBaudRate,
+                         Arc::get_mut(&mut self.inner).unwrap()
+                      ).into()
         }
+
     }
+
+    // pub fn enable_radiometry(&mut self) -> LeptonResult {
+    //     use bindings::*;
+    //     // these copies are baadd mkay
+    //     let mut port: LEP_CAMERA_PORT_DESC_T_TAG = self.into();
+
+    //     unsafe {
+    //         return LEP_SetRadEnableState(&mut port, EnableState::Enabled as u32).into();
+    //     }
+    // }
 }
 
-impl std::convert::From<bindings::LEP_CAMERA_PORT_DESC_T_TAG> for CameraPortDescriptor {
-    fn from(desc: bindings::LEP_CAMERA_PORT_DESC_T_TAG) -> Self {
-        CameraPortDescriptor {
-            port_id:   desc.portID,
-            port_type: desc.portType.into(),
-            baud_rate: desc.portBaudRate,
-            dev_addr:  desc.deviceAddress,
-        }
-    }
-}
 

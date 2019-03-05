@@ -47,11 +47,28 @@ pub enum SpiClockRate {
     Mhz20 = LEP_SPI_CLOCK_RATE_T_TAG_LEP_SPI_CLOCK_20MHZ,
 }
 
-#[repr(C)]
-pub struct CameraPort {
-    port_id:   u16,
-    port_type: PortType,
-    baud_rate: u16,
-    dev_addr:  u8,
+// #[repr(C)]
+// pub struct CameraPort {
+//     port_id:   u16,
+//     port_type: PortType,
+//     baud_rate: u16,
+//     dev_addr:  u8,
+// }
+
+#[derive(Debug, Clone, Copy)]
+#[repr(u32)]
+pub enum PortTag {
+    CciTwi = LEP_CAMERA_PORT_E_TAG_LEP_CCI_TWI, 
+    CciSpi = LEP_CAMERA_PORT_E_TAG_LEP_CCI_SPI, 
+    End    = LEP_CAMERA_PORT_E_TAG_LEP_END_CCI_PORTS, 
 }
 
+impl From<u32> for PortTag {
+    fn from(tag: u32) -> Self {
+        match tag {
+            LEP_CAMERA_PORT_E_TAG_LEP_CCI_TWI => PortTag::CciTwi,
+            LEP_CAMERA_PORT_E_TAG_LEP_CCI_SPI => PortTag::CciSpi,
+            _ => panic!("Invalid Port Tag!"),
+        }
+    }
+}

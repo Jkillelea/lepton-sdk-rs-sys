@@ -5,6 +5,7 @@ authors = ["Jacob Killelea <Jkillelea@protonmail.ch>"]
 edition = "2018"
 
 [dependencies]
+lazy_static = "1.3.0"
 
 [build-dependencies]
 bindgen = "0.46.0"

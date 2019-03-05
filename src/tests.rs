@@ -1,5 +1,4 @@
 // mod tests
-
 use super::bindings::*;
 use super::error_codes::LeptonResult;
 use super::*;
@@ -13,17 +12,33 @@ fn test_open_port_manually() {
     let result: LeptonResult;
 
     unsafe {
-        result = LEP_OpenPort(port_id, port_type as u32, baud_rate, &mut port).into();
+        result = LEP_OpenPort(port_id, 
+                              port_type as u32, 
+                              baud_rate, 
+                              &mut port).into();
     }
 
     println!("{:#?}", port);
-
     assert_eq!(result, LeptonResult::Ok);
 }
 
+
 #[test]
 fn test_open_port_api() {
-    let (port, result) = CameraPortDescriptor::open(1);
-    println!("{:#?}", port);
-    assert_eq!(result, LeptonResult::Ok);
+    for i in &[0, 1] {
+        let mut port = CameraPortDescriptor::new(*i);
+        println!("{:#?}", port);
+        assert_eq!(port.open(), LeptonResult::Ok);
+    }
+}
+
+
+#[test]
+fn test_two_cameras_have_same_inner_struct() {
+    for i in &[0, 1] {
+        let camera_a = CameraPortDescriptor::new(*i);
+        let camera_b = CameraPortDescriptor::new(*i);
+        assert!(std::sync::Arc::ptr_eq(&camera_a.inner, 
+                                       &camera_b.inner));
+    }
 }
