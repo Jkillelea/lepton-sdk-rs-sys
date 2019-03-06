@@ -2,11 +2,13 @@ use std::io;
 use std::io::prelude::*;
 use spidev::{Spidev, SpidevOptions, SPI_MODE_3};
 
+/// An opaque SPI device handle
 pub struct LeptonSpi {
     spi_dev: Spidev,
 }
 
 impl LeptonSpi {
+    /// Create a new SPI handle at `/dev/spidev0.{num}`
     pub fn new(num: u8) -> io::Result<LeptonSpi> {
         let spi_path = format!("/dev/spidev0.{}", num);
         let mut spi_dev = Spidev::open(spi_path)?;
@@ -19,8 +21,10 @@ impl LeptonSpi {
             spi_dev
         })
     }
+}
 
-    pub fn read(&mut self, mut buffer: &mut [u8]) -> io::Result<usize> {
+impl Read for LeptonSpi {
+    fn read(&mut self, mut buffer: &mut [u8]) -> io::Result<usize> {
         Ok(self.spi_dev.read(&mut buffer)?)
     }
 }
