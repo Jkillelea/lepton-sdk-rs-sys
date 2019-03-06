@@ -48,6 +48,13 @@ impl LeptonResult {
     fn is_ok(self) -> bool {
         self == LeptonResult::Ok
     }
+
+    fn unwrap(self) {
+        match self {
+            LeptonResult::Ok => {/* Ok */},
+            _ => {panic!("Called unwrap on a {:?} value", self)},
+        }
+    }
 }
 
 impl std::convert::From<bindings::LEP_RESULT> for LeptonResult {
