@@ -22,7 +22,6 @@ fn test_open_port_manually() {
     assert_eq!(result, LeptonResult::Ok);
 }
 
-
 #[test]
 fn test_open_port_api() {
     for i in &[0, 1] {
@@ -32,13 +31,14 @@ fn test_open_port_api() {
     }
 }
 
-
 #[test]
-fn test_two_cameras_have_same_inner_struct() {
+fn test_enable_radiometry() {
     for i in &[0, 1] {
-        let camera_a = CameraPortDescriptor::new(*i);
-        let camera_b = CameraPortDescriptor::new(*i);
-        assert!(std::sync::Arc::ptr_eq(&camera_a.inner, 
-                                       &camera_b.inner));
+        let mut port = CameraPortDescriptor::new(*i);
+        println!("{:#?}", port);
+        assert_eq!(port.open(), LeptonResult::Ok);
+        assert_eq!(port.enable_radiometry(), LeptonResult::Ok);
     }
 }
+
+
