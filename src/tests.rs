@@ -24,21 +24,17 @@ fn test_open_port_manually() {
 
 #[test]
 fn test_open_port_api() {
-    for i in &[0, 1] {
-        let mut port = CameraPortDescriptor::new(*i);
-        println!("{:#?}", port);
-        assert_eq!(port.open(), LeptonResult::Ok);
-    }
+    let mut port = CameraPortDescriptor::new(1);
+    println!("{:#?}", port);
+    assert_eq!(port.open(), LeptonResult::Ok);
 }
 
 #[test]
 fn test_enable_radiometry() {
-    for i in &[0, 1] {
-        let mut port = CameraPortDescriptor::new(*i);
-        println!("{:#?}", port);
-        assert_eq!(port.open(), LeptonResult::Ok);
-        assert_eq!(port.enable_radiometry(), LeptonResult::Ok);
-    }
+    let mut port = CameraPortDescriptor::new(1);
+    println!("{:#?}", port);
+    assert_eq!(port.open(), LeptonResult::Ok);
+    assert_eq!(port.enable_radiometry(), LeptonResult::Ok);
 }
 
 
