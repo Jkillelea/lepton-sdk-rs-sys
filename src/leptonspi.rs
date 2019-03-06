@@ -8,7 +8,7 @@ pub struct LeptonSpi {
 
 impl LeptonSpi {
     pub fn new(num: u8) -> io::Result<LeptonSpi> {
-        spi_path = format!("/dev/spidev/0.{}", num);
+        spi_path = format!("/dev/spidev0.{}", num);
         let mut spi_dev = Spidev::open(spi_path)?;
 
         spi_dev.configure(SpidevOptions::new()
