@@ -63,9 +63,9 @@ pub enum SpiClockRate {
 #[derive(Debug)]
 #[repr(u32)]
 pub enum PortTag {
-    CciTwi = LEP_CAMERA_PORT_E_TAG_LEP_CCI_TWI, 
-    CciSpi = LEP_CAMERA_PORT_E_TAG_LEP_CCI_SPI, 
-    End    = LEP_CAMERA_PORT_E_TAG_LEP_END_CCI_PORTS, 
+    CciTwi = LEP_CAMERA_PORT_E_TAG_LEP_CCI_TWI,
+    CciSpi = LEP_CAMERA_PORT_E_TAG_LEP_CCI_SPI,
+    End    = LEP_CAMERA_PORT_E_TAG_LEP_END_CCI_PORTS,
 }
 
 impl From<u32> for PortTag {
