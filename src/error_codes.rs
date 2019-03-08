@@ -49,6 +49,10 @@ impl LeptonResult {
         self == LeptonResult::Ok
     }
 
+    fn is_err(self) -> bool {
+        !self.is_ok()
+    }
+
     fn unwrap(self) {
         match self {
             LeptonResult::Ok => {/* Ok */},
