@@ -104,20 +104,12 @@ impl CameraPortDescriptor {
     }
 
 
-    // pub fn own_temperature(&mut self) -> LeptonResult {
-    //     use bindings::*;
-    //     self.check_open();
-    //     unsafe {
-    //         LEP_GetSysFpaTemperatureKelvin(self.into()
-    //     }
-    // }
-
     /// Warn if the camera hasn't been opened
     pub fn check_open(&mut self) {
         if !self.opened {
             match self.open() {
                 LeptonResult::Ok => {/* nothing */},
-                _ => {eprintln!("Camera not opened!")},
+                _ => {eprintln!("[warning] Lepton i2c port not opened!")},
             }
         }
     }
