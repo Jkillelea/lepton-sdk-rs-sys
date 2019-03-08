@@ -45,15 +45,15 @@ pub enum LeptonResult {
 
 #[allow(dead_code)]
 impl LeptonResult {
-    fn is_ok(self) -> bool {
+    pub fn is_ok(self) -> bool {
         self == LeptonResult::Ok
     }
 
-    fn is_err(self) -> bool {
+    pub fn is_err(self) -> bool {
         !self.is_ok()
     }
 
-    fn unwrap(self) {
+    pub fn unwrap(self) {
         match self {
             LeptonResult::Ok => {/* Ok */},
             _ => {panic!("Called unwrap on a {:?} value", self)},
