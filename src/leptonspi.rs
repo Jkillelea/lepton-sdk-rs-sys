@@ -2,6 +2,10 @@ use std::io;
 use std::io::prelude::*;
 use spidev::{Spidev, SpidevOptions, SPI_MODE_3};
 
+// NOTE: this could be declared 'static' instead if we wanted
+// it to be (unsafely) mutable
+const DEFAULT_SPI_SPEED: u32 = 20_000_000; // Hz
+
 /// An opaque SPI device handle
 pub struct LeptonSpi {
     spi_dev: Spidev,
@@ -9,17 +13,18 @@ pub struct LeptonSpi {
 
 impl LeptonSpi {
     /// Create a new SPI handle at `/dev/spidev0.{num}`
-    pub fn new(num: u8) -> io::Result<LeptonSpi> {
+    pub fn new(num: u8, spi_speed: impl Into<Option<u32>>) -> io::Result<LeptonSpi> {
+        let spi_speed = spi_speed.into();
         let spi_path = format!("/dev/spidev0.{}", num);
         let mut spi_dev = Spidev::open(spi_path)?;
 
         spi_dev.configure(SpidevOptions::new()
                                         .bits_per_word(8)
-                                        .max_speed_hz(20_000_000)
+                                        .max_speed_hz(spi_speed
+                                                      .unwrap_or(DEFAULT_SPI_SPEED)
+                                                      )
                                         .mode(SPI_MODE_3))?;
-        Ok(LeptonSpi {
-            spi_dev
-        })
+        Ok(LeptonSpi { spi_dev })
     }
 }
 
