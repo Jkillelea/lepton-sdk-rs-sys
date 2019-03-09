@@ -4,8 +4,8 @@ use spidev::{Spidev, SpidevOptions, SPI_MODE_3};
 
 // NOTE: this could be declared 'static' instead if we wanted
 // it to be (unsafely) mutable
-const DEFAULT_SPI_SPEED: u32 = 20_000_000; // Hz
-pub const SPI_PACKET_SIZE: u32 = 164; // bytes
+pub const SPI_DEFAULT_SPEED: u32 = 20_000_000; // Hz
+pub const SPI_PACKET_SIZE:   u32 = 164; // bytes
 
 /// An opaque SPI device handle
 pub struct LeptonSpi {
@@ -22,7 +22,7 @@ impl LeptonSpi {
         spi_dev.configure(SpidevOptions::new()
                                         .bits_per_word(8)
                                         .max_speed_hz(spi_speed
-                                                      .unwrap_or(DEFAULT_SPI_SPEED)
+                                                      .unwrap_or(SPI_DEFAULT_SPEED)
                                                       )
                                         .mode(SPI_MODE_3))?;
         Ok(LeptonSpi { spi_dev })
