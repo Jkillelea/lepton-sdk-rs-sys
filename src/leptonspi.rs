@@ -35,6 +35,7 @@ impl Read for LeptonSpi {
 }
 
 /// The data sent over SPI
+#[derive(Debug)]
 pub struct LeptonPacket {
     pub valid:     bool,
     pub segment_no: u8, // 3 bits
@@ -43,19 +44,19 @@ pub struct LeptonPacket {
     pub data: Option<Box<[u8]>> // TODO: this datatype is inelegant
 }
 
-// impl std::convert::From<&[u8; 164]> for LeptonPacket {
-//     fn from(buffer: &[u8; 164]) -> LeptonPacket {
-//         let valid      = !((buffer[0] & 0x0F) == 0x0F);
-//         let segment_no = (buffer[0] >> 4) & 0b00000111;
-//         let packet_no  = ((buffer[0] << 4) & 0xF0) | buffer[1];
-//         let crc16      = (buffer[2] << 8) | buffer[3];
-//         let data       = buffer[4..164].clone();
-//         LeptonPacket {
-//             valid,
-//             segment_no,
-//             packet_no,
-//             crc16,
-//             data
-//         }
-//     }
-// }
+impl std::convert::From<&[u8; 164]> for LeptonPacket {
+    fn from(buffer: &[u8; 164]) -> LeptonPacket {
+        let valid      = !((buffer[0] & 0x0F) == 0x0F);
+        let segment_no = (buffer[0] >> 4) & 0b00000111;
+        let packet_no  = ((buffer[0] << 4) & 0xF0) | buffer[1];
+        let crc16      = (buffer[2] << 8) | buffer[3];
+        let data       = buffer[4..164].clone();
+        LeptonPacket {
+            valid,
+            segment_no,
+            packet_no,
+            crc16,
+            data
+        }
+    }
+}
