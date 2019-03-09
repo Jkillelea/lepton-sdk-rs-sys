@@ -45,10 +45,11 @@ pub struct LeptonPacket {
 }
 
 impl std::convert::From<Vec<u8>> for LeptonPacket {
+    // TODO: Here be bugs!
     fn from(buffer: Vec<u8>) -> LeptonPacket {
         let valid      = !((buffer[0] & 0x0F) == 0x0F);
         let segment_no = (buffer[0] >> 4) & 0b00000111;
-        let packet_no  = ((buffer[0] as u16) << 4) | (buffer[1] as u16);
+        let packet_no  = buffer[1] as u16; 
         let crc16      = ((buffer[2] as u16) << 8) | (buffer[3] as u16);
         let data       = buffer[4..164].to_vec();
         LeptonPacket {
