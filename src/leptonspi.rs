@@ -5,6 +5,7 @@ use spidev::{Spidev, SpidevOptions, SPI_MODE_3};
 // NOTE: this could be declared 'static' instead if we wanted
 // it to be (unsafely) mutable
 const DEFAULT_SPI_SPEED: u32 = 20_000_000; // Hz
+pub const SPI_PACKET_SIZE: u32 = 164; // bytes
 
 /// An opaque SPI device handle
 pub struct LeptonSpi {
