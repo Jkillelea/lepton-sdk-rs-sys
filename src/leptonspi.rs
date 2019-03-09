@@ -44,8 +44,8 @@ pub struct LeptonPacket {
     pub data: Vec<u8> // TODO: this datatype is inelegant
 }
 
-impl std::convert::From<[u8; 164]> for LeptonPacket {
-    fn from(buffer: [u8; 164]) -> LeptonPacket {
+impl std::convert::From<Vec<u8>> for LeptonPacket {
+    fn from(buffer: Vec<u8>) -> LeptonPacket {
         let valid      = !((buffer[0] & 0x0F) == 0x0F);
         let segment_no = (buffer[0] >> 4) & 0b00000111;
         let packet_no  = ((buffer[0] as u16) << 4) | (buffer[1] as u16);
