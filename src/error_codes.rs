@@ -2,8 +2,8 @@
 use super::bindings;
 use super::bindings::*;
 
-/// Rust version of all the error codes in the Lepton SDK
-/// `CommOk` is lumped in with regular `Ok` since Rust doesn't let
+/// Rust version of all the error codes in the Lepton SDK.
+///  `CommOk` is lumped in with regular `Ok` since Rust doesn't let
 /// two enum variants be represented by the same integer.
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 #[repr(i32)]
