@@ -37,7 +37,7 @@ impl Read for LeptonSpi {
 }
 
 /// The data sent over SPI
-// #[derive(Debug)]
+#[derive(Debug)]
 pub struct LeptonPacket {
     pub valid:     bool,
     pub segment_no: u8, // 3 bits
